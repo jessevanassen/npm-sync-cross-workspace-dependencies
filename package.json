@@ -1,0 +1,9 @@
+{
+	"private": true,
+	"name": "@jessevanassen/npm-sync-cross-workspace-dependencies",
+	"description": "Syncs cross-dependencies/devDependencies/peerDependencies witin workspaces.",
+	"version": "0.1.0",
+	"type": "module",
+	"files": ["src/"],
+	"bin": "./src/bin.mjs"
+}
