@@ -17,7 +17,7 @@ export function syncCrossWorkspaceDependencies() {
  * @returns {{ [packageName: string]: string }}
  */
 function getWorkspacePackages() {
-	return execNpmCommand('--workspaces pkg get version');
+	return execNpmQuery('--workspaces pkg get version');
 }
 
 /**
@@ -26,7 +26,7 @@ function getWorkspacePackages() {
  */
 function findDependency(dependencyName) {
 	/** @type {{ [workspace: string]: { [dependencyType in DependencyType]?: { [dependencyName: string]: string } } }} */
-	const output = execNpmCommand('--workspaces pkg get dependencies devDependencies peerDependencies');
+	const output = execNpmQuery('--workspaces pkg get dependencies devDependencies peerDependencies');
 
 	return Object.entries(output).flatMap(([ workspace, dependencyTypes ]) =>
 			Object.entries(dependencyTypes).flatMap(([ dependencyType, dependencies ]) =>
@@ -44,13 +44,13 @@ function findDependency(dependencyName) {
  * @param {string} dependencyVersion
  */
 function setDependency(workspace, dependencyType, dependencyName, dependencyVersion) {
-	execNpmCommand(`--workspace ${workspace} pkg set '${dependencyType}.${dependencyName}="${dependencyVersion}"'`);
+	exec(`npm --json --workspace ${workspace} pkg set '${dependencyType}.${dependencyName}="${dependencyVersion}"'`);
 }
 
 /**
  * @param {string} command
  * @returns {object}
  */
-function execNpmCommand(command) {
+function execNpmQuery(command) {
 	return JSON.parse(exec('npm --json ' + command).toString('utf-8'));
 }
