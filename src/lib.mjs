@@ -26,14 +26,17 @@ function getWorkspacePackages() {
  */
 function findDependency(dependencyName) {
 	/** @type {{ [workspace: string]: { [dependencyType in DependencyType]?: { [dependencyName: string]: string } } }} */
-	const output = execNpmQuery('--workspaces pkg get dependencies devDependencies peerDependencies');
+	const output = execNpmQuery('--workspaces pkg get');
 
-	return Object.entries(output).flatMap(([ workspace, dependencyTypes ]) =>
-			Object.entries(dependencyTypes).flatMap(([ dependencyType, dependencies ]) =>
+	return Object.entries(output)
+		.flatMap(([ workspace, dependencyTypes ]) =>
+			Object.entries(dependencyTypes)
+				.filter(([dependencyType]) => ['dependencies', 'devDependencies', 'peerDependencies'].includes(dependencyType))
+				.flatMap(([ dependencyType, dependencies ]) =>
 					Object.entries(dependencies)
 						.filter(([ name ]) => name === dependencyName)
 						.map(([ /**/, version ]) => ({ workspace, dependencyType, version }))
-			)
+				)
 		);
 }
 
